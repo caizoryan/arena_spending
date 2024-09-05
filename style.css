@@ -1,0 +1,144 @@
+
+@font-face {
+	font-family: 'DepartMono';
+	src: url('./fonts/dep.otf') format('opentype');
+}
+
+:root{
+	--l1: #f9f9f9;
+	--d1: #C7D3C4;
+
+	--l2: #D6CAB8;
+	--d2: #222;
+}
+
+
+*{margin: 0; padding: 0; box-sizing: border-box; font-family: 'DepartMono';}
+
+button {
+	all: unset;
+	border: 1px solid var(--d2);
+	padding: .3em;
+	font-size: .8em;
+	cursor: pointer;
+}
+
+button:hover {
+	background-color: var(--d1);
+}
+
+.day {
+	padding: 10px;
+	background-color: var(--l1);
+	border: 1px dotted var(--d2);
+}
+
+.day .date {
+	font-size: .8em;
+	padding-bottom: 1em;
+	margin-bottom: .5em;
+	border-bottom: 1px dotted #ccc;
+}
+
+.day .total {
+	font-size: 1.4em;
+	/* padding: .3em; */
+	/* border: 1px dotted #ccc; */
+	/* border-radius: 30px; */
+
+	color: var(--d2);
+	width: 80%;
+
+}
+
+.spend-item {
+	display: grid;
+	grid-template-columns: 1fr 2fr;
+	grid-gap: 10px;
+	padding: 5px;
+	/* border-top: 1px dotted #ccc; */
+	border-bottom: 1px dotted #ccc;
+	margin:  10px 0;
+
+}
+
+.spend-item .price {
+	font-size: 1.2em;
+	overflow: visible;
+	max-height: 1.5em;
+	background-color: var(--d1);
+	border-radius: 30px;
+
+}
+
+.spend-item .title {
+	font-size: .8em;
+	height: 1.5em;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.week {
+	display: grid;
+	grid-template-columns: repeat(7, 300px);
+
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  width: 97%;
+	height: 85vh;
+
+  grid-gap: 30px;
+	grid-gap: 10px;
+	padding: 10px;
+	margin: 1.5%;
+
+	overflow-x: hidden;
+}
+
+.week-total {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 1em;
+	padding: 10px;
+	margin: 10px;
+	/* border-radius: 30px; */
+	border: 1px solid var(--d2);
+	color: var(--d2);
+	background-color: var(--d1);
+}
+
+
+.bottom-panel {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-gap: 10px;
+	/* padding: 10px; */
+	margin: 1.5%;
+
+	height: 10vh;
+
+}
+
+.week-selector {
+	-webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+
+	width: 50%;
+	display: flex;
+	/* justify-content: end; */
+	margin: 10px;
+	/* margin-left: auto; */
+	padding: 10px;
+	background-color: var(--l1);
+	/* border: 1px dotted var(--d2); */
+}
+
+.week-selector .current {
+	border: 1px solid #ccc;
+	border-radius: 30px;
+	padding: 5px;
+	margin: 0 25px;
+}
+
