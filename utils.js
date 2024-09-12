@@ -26,8 +26,21 @@ let find_blocks = (day, blocks) => blocks
  * @returns {SpendItem}
  */
 let parseSpendItem = (block) => {
+  let earnings = false
   let [price, title, tags] = block.content.split(`\n`);
-  return { price, title, tags }
+  if (price.charAt(0) == "+") earnings = true
+  return { price, title, tags, earnings }
+}
+
+function ignoreEarnings(str) {
+  return str.charAt(0) == "+" ? "0" : str
+}
+
+/**
+ * @param {string} str
+ */
+function subtractEarnings(str) {
+  return str.charAt(0) == "+" ? str.replace("+", "-") : str
 }
 
 /**
@@ -36,14 +49,20 @@ let parseSpendItem = (block) => {
  * @param {Array} items
  * @returns {number} total
  **/
-let total = (items) => {
+let totalSpentDay = (items) => {
   if (!items || items.length == 0) return 0
 
   let spent = items
     ?.reduce(
-      (acc, item) => acc + parseFloat(parseSpendItem(item).price), 0)
+      (acc, item) => acc + parseFloat(subtractEarnings(parseSpendItem(item).price)), 0)
 
   return parseFloat(spent.toFixed(2))
 }
 
-export { find_blocks, parseSpendItem, total }
+
+const totalSpentWeek = (week, contents) => {
+  return week.reduce((acc, day) => acc += totalSpentDay(find_blocks(day, contents)), 0).toFixed(2)
+}
+
+
+export { find_blocks, parseSpendItem, totalSpentDay, totalSpentWeek }
