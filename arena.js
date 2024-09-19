@@ -14,11 +14,9 @@ export const get_channel = async (slug) => {
     },
   })
     .then((response) => {
-      console.log(response);
       return response.json();
     })
     .then((data) => {
-      console.log(data);
       return data;
     });
 };
@@ -48,7 +46,8 @@ export const add_block = (slug, title, content) => {
     .then((data) => {
       let block_id = data.id;
       // TODO: better way to do this
-      if (title !== "") update_block(block_id, { title: title }, slug);
+      if (title !== "") return update_block(block_id, { title: title }, slug);
+      else return data
     });
 };
 
@@ -88,12 +87,9 @@ export const update_block = (block_id, body, slug, fuck = false) => {
     },
     method: "PUT",
     body: JSON.stringify(body),
-  }).then(() => {
-    if (fuck) {
-      fuck_refresh(slug);
-    } else {
-      refresh_journal(slug);
-    }
+  }).then((res) => {
+    if (fuck) { fuck_refresh(slug) }
+    return res
   });
 };
 
@@ -106,7 +102,6 @@ export const connect_block = async (slug, id) => {
     method: "POST",
     body: '{"connectable_id":"' + id + '","connectable_type":"Block"}',
   }).then((res) => {
-    refresh_journal(slug);
     let r = res.json();
     return r;
   });
@@ -126,7 +121,7 @@ export const disconnect_block = (slug, id) => {
     },
     method: "DELETE",
   }).then((res) => {
-    refresh_journal(slug);
+    console.log(res)
   });
 };
 

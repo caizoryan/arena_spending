@@ -28,6 +28,11 @@ let find_blocks = (day, blocks) => blocks
 let parseSpendItem = (block) => {
   let earnings = false
   let [price, title, tags] = block.content.split(`\n`);
+  if (!tags || !price || !title) return undefined
+
+  tags = tags.replace("[", "").replace("]", "")
+  tags = tags.split(", ").filter((tag) => tag != "" && tag != " ");
+
   if (price.charAt(0) == "+") earnings = true
   return { price, title, tags, earnings }
 }
@@ -59,10 +64,38 @@ let totalSpentDay = (items) => {
   return parseFloat(spent.toFixed(2))
 }
 
+let tagFilter = (block, tag) => parseSpendItem(block)?.tags.includes(tag)
+let createTagFilter = (tag) => (block) => tagFilter(block, tag)
+
+
+/**
+ * @param {Array<string>} tass
+ * @returns {Function} Filter
+ **/
+let createOrTagFilter = (tags) => (block) => {
+  let item = parseSpendItem(block)
+  let includes = false
+
+  tags.forEach((tag) => {
+    if (item?.tags.includes(tag)) includes = true
+  })
+  return includes
+}
+
+let createNotOrTagFilter = (tags) => (block) => {
+  let item = parseSpendItem(block)
+  let includes = true
+
+  tags.forEach((tag) => {
+    if (item?.tags.includes(tag)) includes = false
+  })
+  return includes
+}
+
 
 const totalSpentWeek = (week, contents) => {
   return week.reduce((acc, day) => acc += totalSpentDay(find_blocks(day, contents)), 0).toFixed(2)
 }
 
 
-export { find_blocks, parseSpendItem, totalSpentDay, totalSpentWeek }
+export { find_blocks, parseSpendItem, totalSpentDay, totalSpentWeek, createTagFilter, createOrTagFilter, createNotOrTagFilter }

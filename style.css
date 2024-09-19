@@ -1,10 +1,9 @@
-
 @font-face {
 	font-family: 'DepartMono';
 	src: url('./fonts/dep.otf') format('opentype');
 }
 
-:root{
+:root {
 	--l1: #f9f9f9;
 	--d1: #C7D3C4;
 
@@ -13,7 +12,12 @@
 }
 
 
-*{margin: 0; padding: 0; box-sizing: border-box; font-family: 'DepartMono';}
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font-family: 'DepartMono';
+}
 
 button {
 	all: unset;
@@ -31,6 +35,7 @@ button:hover {
 	padding: 10px;
 	background-color: var(--l1);
 	border: 1px dotted var(--d2);
+	position: relative;
 }
 
 .day .date {
@@ -51,6 +56,13 @@ button:hover {
 
 }
 
+button.add {
+	position: absolute;
+	bottom: 10px;
+	right: 10px;
+
+}
+
 .spend-item {
 	display: grid;
 	grid-template-columns: 1fr 2fr;
@@ -58,7 +70,7 @@ button:hover {
 	padding: 5px;
 	/* border-top: 1px dotted #ccc; */
 	border-bottom: 1px dotted #ccc;
-	margin:  10px 0;
+	margin: 10px 0;
 
 }
 
@@ -81,19 +93,64 @@ button:hover {
 
 .week {
 	display: grid;
-	grid-template-columns: repeat(7, 300px);
-
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  width: 97%;
+	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+	width: 97%;
 	height: 85vh;
 
-  grid-gap: 30px;
+	grid-gap: 30px;
 	grid-gap: 10px;
 	padding: 10px;
 	margin: 1.5%;
 
 	overflow-x: hidden;
 }
+
+.modal {
+	position: fixed;
+	top: 25%;
+	left: 250%;
+	width: 50%;
+	height: 50%;
+
+	grid-template-rows: repeat(auto-fill, 1fr);
+	z-index: 100;
+	grid-gap: 10px;
+	display: grid;
+
+	background-color: var(--l1);
+	border: 1px solid var(--d1);
+	padding: 10px;
+
+	transition: all .2s;
+}
+
+.modal .close {
+	position: absolute;
+	top: 1%;
+	right: 1%;
+	padding: 5px;
+}
+
+
+.modal .entry {
+	display: grid;
+	grid-template-columns: 1fr 2fr 1fr;
+	grid-gap: 10px;
+}
+
+.entry>* {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.entry input {
+	height: 3.5em;
+	width: 100%;
+	padding: 5px;
+}
+
+
 
 .week-total {
 	display: flex;
@@ -126,9 +183,12 @@ button:hover {
 }
 
 .week-selector {
-	-webkit-user-select: none; /* Safari */
-	-ms-user-select: none; /* IE 10 and IE 11 */
-	user-select: none; /* Standard syntax */
+	-webkit-user-select: none;
+	/* Safari */
+	-ms-user-select: none;
+	/* IE 10 and IE 11 */
+	user-select: none;
+	/* Standard syntax */
 
 	width: 50%;
 	display: flex;
@@ -142,18 +202,17 @@ button:hover {
 .week-selector .current {
 	border: 1px solid var(--d2);
 	border-radius: 50px;
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				width: 5em;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 5em;
 	padding: 5px;
 	margin: 0 25px;
 }
 
 .week-selector button {
-				width: 8em;
-				display: flex;
-				justify-content: center;
-				align-items: center;
+	width: 8em;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
-
