@@ -5,7 +5,7 @@ let host = "http://localhost:3000/api/";
 // API functions
 export const get_channel = async (slug) => {
   console.log("get channel called", slug);
-  return await fetch(host + `channels/${slug}?per=100`, {
+  return await fetch(host + `channels/${slug}?per=100&force=true`, {
     headers: {
       Authorization: `Bearer ${auth}`,
       cache: "no-store",

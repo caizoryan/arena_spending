@@ -1,16 +1,9 @@
-import { render, mem, h as f, html, sig } from "./solid_monke/solid_monke.js";
+import { render, mem, h as f, html, sig, eff_on } from "./solid_monke/solid_monke.js";
 import { get_channel, add_block } from "./arena.js";
 import { parseSpendItem, totalSpentDay, totalSpentWeek, createTagFilter, createOrTagFilter, createNotOrTagFilter } from "./utils.js";
 import Cal from "./calendar.js"
 
-let food = createOrTagFilter(["food", "grocery"])
-// food = createNotOrTagFilter(["food", "grocery", "earnings"])
-Cal.applyFilter({
-	name: "food",
-	filter: food
-})
-
-Cal.removeFilter({ name: "food" })
+let food = createOrTagFilter(["food"])
 
 let weektotal = mem(() => totalSpentWeek(Cal.week(), Cal.contents()))
 
@@ -26,11 +19,14 @@ let SpendItem = (block) => {
 	let item = parseSpendItem(block)
 	let e = () => item.earnings
 	let e_ = () => !item.earnings
+	console.log("item", item)
+
+
 	return html`
 		.spend-item
 			.price -- ${item.price} $
-			when ${e} then ${_ => html`.price -- ${item.title}`}
-			when ${e_} then ${_ => html`.title -- ${item.title}`}`
+			.title -- ${item.title}
+		`
 }
 
 let modal_date = sig("")
@@ -118,6 +114,86 @@ let WeekView = (week) => {
 		.week
 			each in ${week} as ${Day}
 		.total -- ► ${total} $ ◄`
+}
+
+let SpendingWrapped = () => {
+	let group_by_place = (arr) => {
+		let places = {}
+		if (arr.length > 0) {
+			arr.forEach((a) => {
+				let item = parseSpendItem(a)
+				if (places[item?.title]) {
+
+					let old_price = places[item.title].price
+					let new_price = parseFloat(old_price) + parseFloat(parseSpendItem(a).price)
+					places[item.title] = { price: new_price, title: parseSpendItem(a).title }
+
+				} else {
+					places[item?.title] = parseSpendItem(a)
+				}
+			})
+			// Object.values(places)?.forEach((a) => console.table(a.title, a.price))
+			return places
+		}
+		else return {}
+	}
+	let highest = (arr) => {
+		let places = group_by_place(arr)
+
+		if (Object.keys(places).length == 0) return undefined
+		let high_item = Object.entries(places).reduce((a, b) => a[1]?.price > b[1]?.price ? a : b)
+
+		return { title: high_item[1].title, price: high_item[1].price }
+	}
+
+
+	eff_on(Cal.contents, () => console.log("contents", Cal.contents()))
+	let c = Cal.contents
+
+	// let 
+
+	let _food = mem(() => {
+		console.log("c", c())
+		let items = [...c()]
+		// let filtered = items.filter(food)
+		let filtered = items
+		let high = highest(filtered)
+		console.log("high", high)
+		return high
+	})
+	let rank_sorted = arr => {
+		let places = group_by_place(arr)
+		let sorted = Object.entries(places).sort((a, b) => b[1]?.price - a[1]?.price)
+		console.table(sorted)
+		return sorted
+	}
+
+	let food_sorted_by_price = mem(() => {
+		console.log("c", c())
+		let items = [...c()]
+		// let filtered = items.filter(food)
+		let filtered = items
+		let ranked = rank_sorted(filtered).flat()
+
+		console.log("ranked", ranked)
+
+		return ranked
+	})
+
+
+
+	eff_on(_food, () => console.log("food", _food()))
+
+	let food_price = mem(() => _food()?.price)
+	let food_place = mem(() => _food()?.title)
+
+	let title_price = (e) => html`div -- ${e?.title} ${e?.price}`
+
+	return html`
+		.spend-wrapped
+			each in ${food_sorted_by_price} as ${title_price}
+			div -- Your fav place to food is ${food_place} with ${food_price} $ spent
+`
 }
 
 let Main = html`

@@ -30,6 +30,8 @@ let parseSpendItem = (block) => {
   let [price, title, tags] = block.content.split(`\n`);
   if (!tags || !price || !title) return undefined
 
+  title = title.split("(")[0].trim()
+
   tags = tags.replace("[", "").replace("]", "")
   tags = tags.split(", ").filter((tag) => tag != "" && tag != " ");
 

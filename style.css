@@ -124,6 +124,30 @@ button.add {
 	transition: all .2s;
 }
 
+.spend-wrapped {
+	position: fixed;
+	top: 25%;
+	left: 25%;
+
+	width: 75%;
+	height: 75%;
+
+	background-color: var(--l1);
+	padding: 3%;
+
+	z-index: 100;
+
+	overflow-y: scroll;
+}
+
+.spend-wrapped .close {
+	position: absolute;
+	top: 1%;
+	right: 1%;
+	padding: 5px;
+}
+
+
 .modal .close {
 	position: absolute;
 	top: 1%;
