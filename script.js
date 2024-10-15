@@ -116,27 +116,24 @@ let WeekView = (week) => {
 		.total -- ► ${total} $ ◄`
 }
 
+let show_spending_wrapped = sig(true)
+
+function group_by_place(arr) {
+	if (!arr || arr.lenght > 0) return {}
+	let places = {}
+	arr.forEach((a) => {
+		let item = parseSpendItem(a)
+		if (places[item?.title]) {
+			let old_price = places[item.title].price
+			let new_price = parseFloat(old_price) + parseFloat(parseSpendItem(a).price)
+			places[item.title] = { price: new_price, title: parseSpendItem(a).title }
+		} else { places[item?.title] = parseSpendItem(a) }
+	})
+	return places
+}
+
 let SpendingWrapped = () => {
-	let group_by_place = (arr) => {
-		let places = {}
-		if (arr.length > 0) {
-			arr.forEach((a) => {
-				let item = parseSpendItem(a)
-				if (places[item?.title]) {
 
-					let old_price = places[item.title].price
-					let new_price = parseFloat(old_price) + parseFloat(parseSpendItem(a).price)
-					places[item.title] = { price: new_price, title: parseSpendItem(a).title }
-
-				} else {
-					places[item?.title] = parseSpendItem(a)
-				}
-			})
-			// Object.values(places)?.forEach((a) => console.table(a.title, a.price))
-			return places
-		}
-		else return {}
-	}
 	let highest = (arr) => {
 		let places = group_by_place(arr)
 
@@ -146,51 +143,47 @@ let SpendingWrapped = () => {
 		return { title: high_item[1].title, price: high_item[1].price }
 	}
 
-
-	eff_on(Cal.contents, () => console.log("contents", Cal.contents()))
 	let c = Cal.contents
 
-	// let 
-
 	let _food = mem(() => {
-		console.log("c", c())
 		let items = [...c()]
-		// let filtered = items.filter(food)
-		let filtered = items
+		let filtered = items.filter(food)
+		return filtered
+	})
+
+	let food_highest = mem(() => {
+		if (!_food()) return undefined
+		if (!Array.isArray(_food())) return undefined
+
+		let filtered = _food()
 		let high = highest(filtered)
-		console.log("high", high)
 		return high
 	})
+
 	let rank_sorted = arr => {
 		let places = group_by_place(arr)
 		let sorted = Object.entries(places).sort((a, b) => b[1]?.price - a[1]?.price)
-		console.table(sorted)
 		return sorted
 	}
 
 	let food_sorted_by_price = mem(() => {
-		console.log("c", c())
-		let items = [...c()]
-		// let filtered = items.filter(food)
+		if (!_food()) return []
+		if (!Array.isArray(_food())) return []
+
+		let items = [..._food()]
 		let filtered = items
 		let ranked = rank_sorted(filtered).flat()
-
-		console.log("ranked", ranked)
 
 		return ranked
 	})
 
-
-
-	eff_on(_food, () => console.log("food", _food()))
-
-	let food_price = mem(() => _food()?.price)
-	let food_place = mem(() => _food()?.title)
+	let food_price = mem(() => food_highest()?.price)
+	let food_place = mem(() => food_highest()?.title)
 
 	let title_price = (e) => html`div -- ${e?.title} ${e?.price}`
 
 	return html`
-		.spend-wrapped
+		.spend-wrapped [active = ${show_spending_wrapped}]
 			each in ${food_sorted_by_price} as ${title_price}
 			div -- Your fav place to food is ${food_place} with ${food_price} $ spent
 `
@@ -200,6 +193,7 @@ let Main = html`
 		.modal -- ${AddModal}
 		.week
 			each in ${Cal.week} as ${Day}
+		div -- ${_ => SpendingWrapped}
 
 		.bottom-panel 
 			.week-total -- ► Week Total: ${weektotal} $ ◄
@@ -209,5 +203,12 @@ let Main = html`
 				span.current                        -- ${Cal.current_week}
 				button [onclick = ${Cal.nextWeek}]  -- Next`
 
+
+document.addEventListener("keydown", (e) => {
+	if (e.key == "c") {
+		show_spending_wrapped.set(!show_spending_wrapped())
+
+	}
+})
 
 render(f("div", Main), document.body);
