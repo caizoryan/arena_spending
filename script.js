@@ -116,7 +116,7 @@ let WeekView = (week) => {
 		.total -- ► ${total} $ ◄`
 }
 
-let show_spending_wrapped = sig(true)
+let show_spending_wrapped = sig(false)
 
 function group_by_place(arr) {
 	if (!arr || arr.lenght > 0) return {}

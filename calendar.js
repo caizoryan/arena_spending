@@ -3,7 +3,7 @@ import { generate_year } from "./generate_year.js";
 
 // 8 is September
 let current_month = sig(8)
-let current_week = sig(36)
+let current_week = sig(42)
 
 let data = mut({ channel: {}, year: generate_year(2024), filters: [] });
 let week = mem(() => data.year[current_week()]);
